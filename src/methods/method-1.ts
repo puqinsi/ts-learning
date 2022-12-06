@@ -1,6 +1,5 @@
 /* 模式匹配做提取 */
 export default {};
-// 疑问：怎么类型都是具体值呢？
 
 // demo1
 type p = Promise<'zhao'>;
