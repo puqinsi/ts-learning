@@ -8,7 +8,7 @@ type p = Promise<'zhao'>;
 type GetValueType<P> = P extends Promise<infer Value> ? Value : never;
 type GetValueResult = GetValueType<p>;
 
-// demo2-数组
+// 数组
 type arr = [1, 2, 3, 4];
 type GetFirst<Arr extends unknown[]> = Arr extends [infer First, ...unknown[]]
     ? First
@@ -34,7 +34,7 @@ type ShiftArr<Arr extends unknown[]> = Arr extends []
     : unknown;
 type ShiftArrResult = ShiftArr<arr>;
 
-// demo3-字符串
+// 字符串
 type str = 'puqinsi';
 type StartWith<
     Str extends string,
