@@ -120,4 +120,4 @@ type DeepReadonlyResult2 = DeepReadonlyResult['a'];
 type DeepReadonlyResult3 = DeepReadonlyResult2['b'];
 type DeepReadonlyResult1 = DeepReadonly1<Obj>;
 
-export type { BuildArray };
+export type { BuildArray, IsEqual };
