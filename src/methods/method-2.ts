@@ -105,3 +105,5 @@ interface Person {
     age: number;
 }
 type FilterByValueTypeRes = FilterByValueType<Person, number>;
+
+export type { CamelCase };
