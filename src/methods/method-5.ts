@@ -1,7 +1,5 @@
-import { CamelCase } from './method-2';
-
 /* 联合分散可简化 */
-export default {};
+import { CamelCase } from './method-2';
 
 // 分布式条件类型
 type CamelCaseArr<Arr extends unknown[]> = Arr extends [
@@ -47,3 +45,5 @@ type AllCombination<A extends string, B extends string = A> = A extends A
     ? Combination<A, AllCombination<Exclude<B, A>>>
     : never;
 type AllCombinationResult = AllCombination<'a' | 'b' | 'c'>;
+
+export type { IsUnion };

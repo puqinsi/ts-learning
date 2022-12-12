@@ -1,5 +1,4 @@
 /* 重新构造做变换 */
-export default {};
 
 // 数组类型
 type Push<Arr extends unknown[], Ele> = [...Arr, Ele];
