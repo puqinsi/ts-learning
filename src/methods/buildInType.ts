@@ -19,6 +19,8 @@ type OmitResult = Omit<{ a: 1; b: 2; c: 3; d: 4 }, 'a' | 'c'>;
 
 // Awaited
 type AwaitedResult = Awaited<Promise<Promise<Promise<string>>>>;
+type Obj = { a: 1; b: 2 };
+type AwaitedResult2 = Awaited<Promise<{ [Key in keyof Obj]: Obj[Key] }>>;
 
 // NonNullable
 type NonNullableRes = NonNullable<null>;

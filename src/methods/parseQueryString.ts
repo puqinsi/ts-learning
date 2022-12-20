@@ -27,9 +27,38 @@ type MergeValues<One, Other> = One extends Other
 
 // 注意：Key 的写法
 type ParseParam<Param extends string> =
-    Param extends `${infer Key}=${infer Value}` ? { [K in Key]: Value } : {};
+    Param extends `${infer Key}=${infer Value}`
+        ? { [K in Key]: Value }
+        : Record<string, any>;
 
 type ParseQueryStringRes = ParseQueryString<'a=1&b=2&c=3'>;
 type ParseQueryStringRes2 = ParseQueryString<'a=1&b=2&c=3&a=2'>;
+
+// 实际应用
+function parseQueryString<Str extends string>(
+    queryStr: Str,
+): ParseQueryString<Str>;
+function parseQueryString(queryStr: string) {
+    if (!queryStr || !queryStr.length) {
+        return {};
+    }
+    const queryObj: Record<string, any> = {};
+    const items = queryStr.split('&');
+    items.forEach(item => {
+        const [key, value] = item.split('=');
+        if (queryObj[key]) {
+            if (Array.isArray(queryObj[key])) {
+                queryObj[key].push(value);
+            } else {
+                queryObj[key] = [queryObj[key], value];
+            }
+        } else {
+            queryObj[key] = value;
+        }
+    });
+    return queryObj;
+}
+
+const res = parseQueryString('a=1&b=2&c=3');
 
 export default ParseQueryString;
