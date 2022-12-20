@@ -48,7 +48,7 @@ type IsTupleResult = IsTuple<[1, 2, 3]>;
 type IsTupleResult2 = IsTuple<number[]>;
 
 // UnionToIntersection
-type UnionToIntersection<U> = (
+export type UnionToIntersection<U> = (
     U extends U ? (x: U) => unknown : never
 ) extends (x: infer R) => unknown
     ? R
