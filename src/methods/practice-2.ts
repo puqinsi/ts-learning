@@ -1,6 +1,8 @@
 /* 练习二 */
 
+import { CamelCase } from './method-2';
 import { UnionToIntersection } from './method-6';
+import { Copy } from './practice-1';
 
 export default {};
 // 函数重载
@@ -50,3 +52,73 @@ type UnionToTuple<T> = UnionToIntersection<
     ? [...UnionToTuple<Exclude<T, ReturnType>>, ReturnType]
     : [];
 type UnionToTupleRes = UnionToTuple<'a' | 'b' | 'c'>;
+
+// join
+// 注意写法
+declare function join<Delimiter extends string>(
+    delimiter: Delimiter,
+): <Items extends string[]>(...args: Items) => JoinType<Items, Delimiter>;
+
+// 提取、递归
+type JoinType<
+    Items extends any[],
+    Delimiter extends string,
+    Result extends string = '',
+> = Items extends [infer First, ...infer Rest]
+    ? JoinType<Rest, Delimiter, `${Result}${Delimiter}${First & string}`>
+    : RemoveFirstDelimiter<Result>;
+
+// 提取
+type RemoveFirstDelimiter<Str extends string> =
+    Str extends `${infer _}${infer Rest}` ? Rest : Str;
+
+const res = join('_')('a', 'b', 'c');
+
+// DeepCamelize
+// 提取、变换、递归
+type DeepCamelize<Obj extends Record<string, any>> = Obj extends unknown[]
+    ? CamelizeArr<Obj>
+    : {
+          [Key in keyof Obj as Key extends `${infer First}_${infer Rest}`
+              ? `${First}${CamelCase<Capitalize<Rest>>}`
+              : Key]: DeepCamelize<Obj[Key]>;
+      };
+
+// 提取、变换、递归
+type CamelizeArr<Arr extends unknown[]> = Arr extends [
+    infer First,
+    ...infer Rest,
+]
+    ? [
+          First extends Record<string, any> ? DeepCamelize<First> : First,
+          ...CamelizeArr<Rest>,
+      ]
+    : [];
+
+type DeepCamelizeRes = DeepCamelize<{
+    aa_aa_aa: { bb_bb_bb: { cc_cc_cc: 1 } };
+}>;
+type DeepCamelizeRes2 = DeepCamelize<{
+    aa_aa_aa: { bb_bb_bb: [{ cc_cc_cc: 1; dd_dd_dd: 2 }] };
+}>;
+
+// AllKeyPath
+// 映射、变换
+// 需要的是 value 部分，所以取 [keyof Obj] 的值。keyof Obj 是 key 的联合类型，那么传入之后得到的就是所有 key 对应的 value 的联合类型。
+type AllKeyPath<Obj extends Record<string, any>> = {
+    [Key in keyof Obj]: Key extends string
+        ? Obj[Key] extends Record<string, any>
+            ? Key | `${Key}.${AllKeyPath<Obj[Key]>}`
+            : Key
+        : never;
+}[keyof Obj];
+
+type AllKeyPathRes = AllKeyPath<{ a: { b: 1 }; c: 2 }>;
+
+// Defaultize
+// 内置高级类型
+type Defaultize<A, B> = Pick<A, Exclude<keyof A, keyof B>> &
+    Partial<Pick<A, Extract<keyof A, keyof B>>> &
+    Partial<Pick<B, Exclude<keyof B, keyof A>>>;
+type DefaultizeRes = Defaultize<{ a: 1; b: 2 }, { b: 2; c: 3 }>;
+type DefaultizeRes2 = Copy<Defaultize<{ a: 1; b: 2 }, { b: 2; c: 4 }>>;
