@@ -60,12 +60,21 @@ declare function join<Delimiter extends string>(
 ): <Items extends string[]>(...args: Items) => JoinType<Items, Delimiter>;
 
 // 提取、递归
+// type JoinType<
+//     Items extends any[],
+//     Delimiter extends string,
+//     Result extends string = '',
+// > = Items extends [infer First, ...infer Rest]
+//     ? JoinType<Rest, Delimiter, `${Result}${Delimiter}${First & string}`>
+//     : RemoveFirstDelimiter<Result>;
+
+// 新语法 infer extends
 type JoinType<
     Items extends any[],
     Delimiter extends string,
     Result extends string = '',
-> = Items extends [infer First, ...infer Rest]
-    ? JoinType<Rest, Delimiter, `${Result}${Delimiter}${First & string}`>
+> = Items extends [infer First extends string, ...infer Rest]
+    ? JoinType<Rest, Delimiter, `${Result}${Delimiter}${First}`>
     : RemoveFirstDelimiter<Result>;
 
 // 提取
@@ -122,3 +131,15 @@ type Defaultize<A, B> = Pick<A, Exclude<keyof A, keyof B>> &
     Partial<Pick<B, Exclude<keyof B, keyof A>>>;
 type DefaultizeRes = Defaultize<{ a: 1; b: 2 }, { b: 2; c: 3 }>;
 type DefaultizeRes2 = Copy<Defaultize<{ a: 1; b: 2 }, { b: 2; c: 4 }>>;
+
+// 新语法：infer extends
+enum Code {
+    a = 111,
+    b = 222,
+    c = 'abc',
+}
+
+type Res = `${Code}`;
+
+type StrToNumber<Str> = Str extends `${infer Num extends number}` ? Num : Str;
+type Res2 = StrToNumber<`${Code}`>;
